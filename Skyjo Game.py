@@ -78,7 +78,10 @@ if 'setup_complete' not in st.session_state:
     st.subheader("Player Setup")
     name = st.text_input("Enter your name:", value="Player")
     target = st.number_input("Game ends when someone reaches this score:", min_value=50, max_value=200, value=100)
-    if st.button("Start Game") and name.strip():
+
+    start_game = st.button("Start Game")
+
+    if start_game and name.strip():
         st.session_state.player_name = name
         st.session_state.target_score = target
         st.session_state.user_total = 0
@@ -86,12 +89,12 @@ if 'setup_complete' not in st.session_state:
         st.session_state.round_starter = None
         st.session_state.message_log = []
         st.session_state.history = []
-        setup_new_round()
         st.session_state.setup_complete = True
-        st.rerun()
+        setup_new_round()
+        st.experimental_rerun()
     else:
         st.stop()
 
-# Now the rest of the game interface will continue running properly
-
-
+# If setup is complete, continue with game logic
+st.write("✅ Setup complete. Game will continue...")
+# Placeholder: The full gameplay logic will be implemented here after setup.
