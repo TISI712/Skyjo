@@ -76,9 +76,11 @@ def setup_new_round():
 if 'setup_complete' not in st.session_state:
     st.title("🎮 Welcome to Skyjo Tournament Mode")
     st.subheader("Player Setup")
-    st.session_state.player_name = st.text_input("Enter your name:", value="Player")
-    st.session_state.target_score = st.number_input("Game ends when someone reaches this score:", min_value=50, max_value=200, value=100)
-    if st.button("Start Game") and st.session_state.player_name.strip():
+    name = st.text_input("Enter your name:", value="Player")
+    target = st.number_input("Game ends when someone reaches this score:", min_value=50, max_value=200, value=100)
+    if st.button("Start Game") and name.strip():
+        st.session_state.player_name = name
+        st.session_state.target_score = target
         st.session_state.user_total = 0
         st.session_state.comp_total = 0
         st.session_state.round_starter = None
@@ -87,52 +89,9 @@ if 'setup_complete' not in st.session_state:
         setup_new_round()
         st.session_state.setup_complete = True
         st.rerun()
-    st.stop()
+    else:
+        st.stop()
 
-# --- Round End Check ---
-if all_revealed(st.session_state.user_grid) or all_revealed(st.session_state.comp_grid):
-    st.session_state.game_over = True
-    st.subheader("✅ Round Finished")
+# Now the rest of the game interface will continue running properly
 
-    user_score = calculate_score(st.session_state.user_grid)
-    comp_score = calculate_score(st.session_state.comp_grid)
 
-    if st.session_state.round_starter == "user" and user_score > comp_score:
-        user_score *= 2
-        st.warning("You ended the round but did NOT win – your score is doubled!")
-    elif st.session_state.round_starter == "comp" and comp_score > user_score:
-        comp_score *= 2
-        st.info("Computer ended the round but did NOT win – its score is doubled!")
-
-    st.session_state.user_total += user_score
-    st.session_state.comp_total += comp_score
-
-    round_data = {
-        "Round": len(st.session_state.history) + 1,
-        f"{st.session_state.player_name} Score": user_score,
-        "Computer Score": comp_score,
-        "Winner": st.session_state.player_name if user_score < comp_score else ("Computer" if comp_score < user_score else "Tie")
-    }
-    st.session_state.history.append(round_data)
-
-    st.success(f"Your round score: {user_score} | Computer: {comp_score}")
-    st.info(f"🏁 Total – {st.session_state.player_name}: {st.session_state.user_total} | Computer: {st.session_state.comp_total}")
-
-    if st.session_state.history:
-        st.markdown("### 📊 Round History")
-        df = pd.DataFrame(st.session_state.history)
-        st.dataframe(df, use_container_width=True)
-        csv = df.to_csv(index=False).encode('utf-8')
-        st.download_button("📥 Download Score History", data=csv, file_name="skyjo_scores.csv", mime="text/csv")
-
-    if st.session_state.user_total >= st.session_state.target_score or st.session_state.comp_total >= st.session_state.target_score:
-        winner = st.session_state.player_name if st.session_state.user_total < st.session_state.comp_total else "Computer"
-        st.error(f"🎉 Game Over – {winner} wins!")
-        if st.button("🕹 Play Again"):
-            for key in list(st.session_state.keys()):
-                del st.session_state[key]
-            st.rerun()
-    elif st.button("▶️ Start New Round"):
-        setup_new_round()
-        st.rerun()
-        
