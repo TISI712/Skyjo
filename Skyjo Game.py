@@ -159,7 +159,6 @@ with c2:
     if 'game_over' not in st.session_state:
         st.session_state.game_over = False
     if st.session_state.turn == "user" and st.session_state.selected_card is None:
-    if st.session_state.turn == "user" and st.session_state.selected_card is None:
         if st.button("🃏 Draw from pile"):
             st.session_state.selected_card = st.session_state.draw_pile.pop()
         if st.button("📥 Take Discard"):
