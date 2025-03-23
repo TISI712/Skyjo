@@ -149,8 +149,12 @@ def render_grid(grid, name, editable=False):
             card = grid[c][r]
             key = f"{name}_{r}_{c}"
             if card['revealed']:
-                row[c].markdown(f"""<div style='background-color:{get_card_color(card['value'])}; padding:10px; text-align:center; border-radius:10px;'>""")
-                    <strong>{card['value']}</strong></div>", unsafe_allow_html=True)
+                color = get_card_color(card['value'])
+                row[c].markdown(f"""
+                    <div style='background-color:{color}; padding:10px; text-align:center; border-radius:10px;'>
+                        <strong>{card['value']}</strong>
+                    </div>
+                """, unsafe_allow_html=True)
             elif editable and st.session_state.selected_card is None:
                 if row[c].button("❓", key=key):
                     card['revealed'] = True
