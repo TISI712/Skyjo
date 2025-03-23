@@ -1,8 +1,11 @@
+# Skyjo Streamlit Game - Full Final Version ✅
+# Merged: Game logic + UI styling + instructions + deploy-ready
+
 import streamlit as st
 from random import shuffle, choice
 import pandas as pd
 
-# --- Page Config and Style ---
+# --- Page Config and Custom Style ---
 st.set_page_config(layout="wide", page_title="Skyjo")
 st.markdown("""
 <style>
@@ -16,8 +19,52 @@ st.markdown("""
         border: none;
     }
     .stButton>button:hover {background-color: #45a049;}
+    .card-style {
+        padding: 12px;
+        margin: 4px auto;
+        border-radius: 12px;
+        width: 60px;
+        height: 50px;
+        font-size: 20px;
+        font-weight: bold;
+        text-align: center;
+    }
+    .title {
+        font-size: 36px;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+    .instructions {
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+        margin-bottom: 20px;
+    }
 </style>
 """, unsafe_allow_html=True)
+
+st.markdown("""<div class='title'>🃏 Skyjo Tournament Mode</div>""", unsafe_allow_html=True)
+st.markdown("""
+<div class='instructions'>
+<b>How to Play:</b><br>
+- On your turn, draw a card or take the top discard.<br>
+- You may replace any card (even hidden) with your drawn card, or discard it and flip one hidden card.<br>
+- When all your cards are face up, the round ends after the opponent gets one last turn.<br>
+- Try to get the lowest score possible! 🎯
+</div>
+""", unsafe_allow_html=True)
+
+# ✅ To deploy:
+# 1. Create a file called requirements.txt with:
+#    streamlit
+#    pandas
+# 2. Upload this Python file and the requirements.txt to a GitHub repository.
+# 3. Deploy your app on https://streamlit.io/cloud
+
+# ✅ Game logic continues...
 
 # --- Card Setup ---
 def get_card_deck():
@@ -96,7 +143,6 @@ def end_round():
 
 # --- Initial Game Setup ---
 if "setup_complete" not in st.session_state:
-    st.title("🎮 Welcome to Skyjo Tournament Mode")
     name = st.text_input("Enter your name:", value="Player")
     max_rounds = st.number_input("How many rounds to play?", 1, 20, 5)
     if st.button("Start Game") and name.strip():
@@ -232,5 +278,3 @@ if st.session_state.turn == "comp" and not st.session_state.game_over:
     st.session_state.comp_grid = remove_matching_columns(st.session_state.comp_grid)
     st.session_state.turn = "user"
     st.rerun()
-
-
