@@ -182,7 +182,7 @@ st.markdown(f"### Turn: {'🟢 ' + st.session_state.player_name if st.session_st
 st.markdown(f"📂 <b>{st.session_state.player_name} Points:</b> {count_revealed(st.session_state.user_grid)} / 12", unsafe_allow_html=True)
 st.markdown(f"🧠 <b>Computer Points:</b> {count_revealed(st.session_state.comp_grid)} / 12", unsafe_allow_html=True)
 
-    button_col1, button_col2, button_col3 = st.columns([1,2,1])
+button_col1, button_col2, button_col3 = st.columns([1,2,1])
 if st.session_state.turn == "user" and st.session_state.selected_card is None:
     with button_col2:
         if st.button("🃏 Draw from pile"):
@@ -243,7 +243,7 @@ def render_grid(grid, name, editable=False):
             else:
                 row[c].markdown("❓")
 
-    button_col1, button_col2, button_col3 = st.columns([1,2,1])
+button_col1, button_col2, button_col3 = st.columns([1,2,1])
 with left:
     render_grid(st.session_state.user_grid, st.session_state.player_name, editable=(st.session_state.turn == "user"))
 
@@ -275,5 +275,6 @@ if st.session_state.turn == "comp" and not st.session_state.game_over:
     st.session_state.comp_grid = remove_matching_columns(st.session_state.comp_grid)
     st.session_state.turn = "user"
     st.rerun()
+
 
 
