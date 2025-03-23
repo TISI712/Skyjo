@@ -150,8 +150,8 @@ if 'turn' not in st.session_state: st.session_state.turn = 'user'
 if 'game_over' not in st.session_state: st.session_state.game_over = False
 turn_player = st.session_state.player_name if st.session_state.turn == "user" else "Computer"
 st.markdown(f"### Turn: {'🟢 ' + turn_player}")
-st.write(f"📊 {st.session_state.player_name} Score: {calculate_score(st.session_state.user_grid)} / 12")
-st.write(f"🧠 Computer Score: {calculate_score(st.session_state.comp_grid)} / 12")
+st.markdown(f"📊 {player_name} Score: {st.session_state.player_score}")
+st.markdown(f"🧠 Computer Score: {st.session_state.computer_score}")
 
 # --- Middle Buttons ---
 c1, c2, c3 = st.columns([1,2,1])
@@ -161,8 +161,7 @@ with c2:
     if st.session_state.turn == "user" and st.session_state.selected_card is None:
         if st.button("🃏 Draw from pile"):
             st.session_state.selected_card = st.session_state.draw_pile.pop()
-        st.markdown(f"**Top Discard:** `{st.session_state.discard_pile[-1]}`")
-        if st.button("📥 Take Discard"):
+        if st.button(f"📥 Take Discard ({st.session_state.discard_pile[-1]})"):
             st.session_state.selected_card = st.session_state.discard_pile.pop()
 
 if st.session_state.selected_card is not None:
