@@ -96,7 +96,7 @@ if 'setup_complete' not in st.session_state:
         st.session_state.history = []
         st.session_state.setup_complete = True
         setup_new_round()
-        st.experimental_rerun()
+        st.rerun()
     st.stop()
 
 # --- Display Turn ---
@@ -214,3 +214,4 @@ if not st.session_state.user_turn and not st.session_state.game_over:
             st.session_state.comp_grid = remove_matching_columns(st.session_state.comp_grid)
         st.session_state.user_turn = True
         st.experimental_rerun()
+
