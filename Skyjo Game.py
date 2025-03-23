@@ -150,7 +150,7 @@ if 'turn' not in st.session_state: st.session_state.turn = 'user'
 if 'game_over' not in st.session_state: st.session_state.game_over = False
 turn_player = st.session_state.player_name if st.session_state.turn == "user" else "Computer"
 st.markdown(f"### Turn: {'🟢 ' + turn_player}")
-st.markdown(f"📊 {player_name} Score: {st.session_state.player_score}")
+st.markdown(f"📊 {st.session_state.player_name} Score: {st.session_state.player_score}")
 st.markdown(f"🧠 Computer Score: {st.session_state.computer_score}")
 
 # --- Middle Buttons ---
