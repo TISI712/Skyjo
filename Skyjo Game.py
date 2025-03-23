@@ -48,7 +48,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("""<div class='title'>🃏 Skyjo Tournament Mode</div>""", unsafe_allow_html=True)
+st.markdown("""<div style='margin-top: 2rem; margin-bottom: 1rem;' class='title'>🃏 Skyjo Tournament Mode</div>""", unsafe_allow_html=True)
 st.markdown("""
 <div class='instructions'>
 <b>How to Play:</b><br>
@@ -161,6 +161,7 @@ with c2:
     if st.session_state.turn == "user" and st.session_state.selected_card is None:
         if st.button("🃏 Draw from pile"):
             st.session_state.selected_card = st.session_state.draw_pile.pop()
+        st.markdown(f"**Top Discard:** `{st.session_state.discard_pile[-1]}`")
         if st.button("📥 Take Discard"):
             st.session_state.selected_card = st.session_state.discard_pile.pop()
 
