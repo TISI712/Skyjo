@@ -129,3 +129,4 @@ if not st.session_state.user_turn and not st.session_state.game_over:
         st.session_state.user_turn = True
         st.experimental_rerun()
 
+
