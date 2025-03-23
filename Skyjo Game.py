@@ -162,13 +162,17 @@ def render_grid(grid, name, editable=False):
                     st.session_state.turn = "comp"
                     st.rerun()
             elif editable and st.session_state.selected_card is not None:
-                if row[c].button("Swap", key=key):
+                btn_label = "Swap" if card['revealed'] else "?"
+                if row[c].button(btn_label, key=key):
                     st.session_state.discard_pile.append(card['value'])
                     card['value'] = st.session_state.selected_card
                     card['revealed'] = True
                     st.session_state.selected_card = None
-                    st.session_state.user_grid = remove_matching_columns(st.session_state.user_grid)
-                    st.session_state.turn = "comp"
+                    if name == st.session_state.player_name:
+                        st.session_state.user_grid = remove_matching_columns(st.session_state.user_grid)
+                    else:
+                        st.session_state.comp_grid = remove_matching_columns(st.session_state.comp_grid)
+                    st.session_state.turn = "comp" if name == st.session_state.player_name else "user"
                     st.rerun()
             else:
                 row[c].markdown("❓")
@@ -228,3 +232,4 @@ if st.session_state.turn == "comp" and not st.session_state.game_over:
     st.session_state.comp_grid = remove_matching_columns(st.session_state.comp_grid)
     st.session_state.turn = "user"
     st.rerun()
+
