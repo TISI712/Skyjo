@@ -142,10 +142,10 @@ if all_revealed(st.session_state.user_grid) or all_revealed(st.session_state.com
         if st.button("🔁 Play Again"):
             for key in list(st.session_state.keys()):
                 del st.session_state[key]
-            st.experimental_rerun()
+            st.rerun()
     elif st.button("▶️ Start New Round"):
         setup_new_round()
-        st.experimental_rerun()
+        st.rerun()
     st.stop()
 
 # --- Draw and Discard Section ---
@@ -168,7 +168,7 @@ if st.session_state.selected_card is not None:
         st.session_state.selected_card = None
         reveal_random_card(st.session_state.user_grid)
         st.session_state.user_turn = False
-        st.experimental_rerun()
+        st.rerun()
 
 # --- Grid Rendering ---
 def render_grid(grid, name, editable=False):
@@ -185,7 +185,7 @@ def render_grid(grid, name, editable=False):
                     card['revealed'] = True
                     st.session_state.user_grid = remove_matching_columns(st.session_state.user_grid)
                     st.session_state.user_turn = False
-                    st.experimental_rerun()
+                    st.rerun()
             elif editable and st.session_state.selected_card is not None:
                 if row[c].button("Swap", key=key):
                     st.session_state.discard_pile.append(card['value'])
@@ -194,7 +194,7 @@ def render_grid(grid, name, editable=False):
                     st.session_state.selected_card = None
                     st.session_state.user_grid = remove_matching_columns(st.session_state.user_grid)
                     st.session_state.user_turn = False
-                    st.experimental_rerun()
+                    st.rerun()
             else:
                 row[c].markdown("❓")
 
@@ -213,5 +213,4 @@ if not st.session_state.user_turn and not st.session_state.game_over:
             reveal_random_card(st.session_state.comp_grid)
             st.session_state.comp_grid = remove_matching_columns(st.session_state.comp_grid)
         st.session_state.user_turn = True
-        st.experimental_rerun()
-
+        st.rerun()
