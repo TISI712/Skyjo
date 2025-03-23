@@ -156,8 +156,10 @@ if 'computer_score' not in st.session_state:
     st.session_state.computer_score = 0
 if 'player_name' not in st.session_state:
     st.session_state.player_name = "Player"
-st.markdown(f"📊 {st.session_state.player_name} Score: {st.session_state.player_score}")
-st.markdown(f"🧠 Computer Score: {st.session_state.computer_score}")
+user_score = calculate_score(st.session_state.user_grid)
+comp_score = calculate_score(st.session_state.comp_grid)
+st.markdown(f"📊 {st.session_state.player_name} Score: {user_score}")
+st.markdown(f"🧠 Computer Score: {comp_score}")
 
 # --- Middle Buttons ---
 c1, c2, c3 = st.columns([1,2,1])
@@ -268,3 +270,4 @@ if st.session_state.get("game_over"):
         for k in list(st.session_state.keys()):
             del st.session_state[k]
         st.rerun()
+        
