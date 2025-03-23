@@ -156,7 +156,7 @@ st.write(f"🧠 Computer Score: {calculate_score(st.session_state.comp_grid)} / 
 # --- Middle Buttons ---
 c1, c2, c3 = st.columns([1,2,1])
 with c2:
-    if 'turn' not in st.session_state: st.session_state.turn = 'user'
+        if 'turn' not in st.session_state: st.session_state.turn = 'user'
 if 'game_over' not in st.session_state: st.session_state.game_over = False
     if st.session_state.turn == "user" and st.session_state.selected_card is None:
         if st.button("🃏 Draw from pile"):
@@ -210,10 +210,10 @@ def render_grid(grid, name, editable=False):
 # --- Render Layout ---
 left, right = st.columns(2)
 with left:
-    render_grid(st.session_state.user_grid, st.session_state.player_name, editable=(st.session_state.turn == "user"))
+        render_grid(st.session_state.user_grid, st.session_state.player_name, editable=(st.session_state.turn == "user"))
 st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
 with right:
-    render_grid(st.session_state.comp_grid, "Computer")
+        render_grid(st.session_state.comp_grid, "Computer")
 
 # --- Computer Turn ---
 if 'turn' not in st.session_state: st.session_state.turn = 'user'
@@ -262,3 +262,4 @@ if st.session_state.get("game_over"):
         for k in list(st.session_state.keys()):
             del st.session_state[k]
         st.rerun()
+        
