@@ -193,10 +193,7 @@ def render_grid(grid, name, editable=False):
             key = f"{name}_{r}_{c}"
             if card['revealed']:
                 color = get_card_color(card['value'])
-elif editable and card['revealed']:
-    if row[c].button("🔄 Switch", key=key+"_switch"):
-        card['revealed'] = False
-        st.rerun()
+
 
                 row[c].markdown(f"""
                     <div style='background-color:{color}; padding:10px; text-align:center; border-radius:10px;'>
@@ -288,3 +285,4 @@ if st.session_state.turn == "comp" and not st.session_state.game_over:
     st.session_state.comp_grid = remove_matching_columns(st.session_state.comp_grid)
     st.session_state.turn = "user"
     st.rerun()
+
