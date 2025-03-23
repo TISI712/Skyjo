@@ -179,17 +179,16 @@ if all_revealed(st.session_state.comp_grid):
 
 # --- UI ---
 st.markdown(f"### Turn: {'🟢 ' + st.session_state.player_name if st.session_state.turn == 'user' else '🤖 Computer'}")
-st.markdown(f"📂 <b>{st.session_state.player_name} Open Cards:</b> {count_revealed(st.session_state.user_grid)} / 12", unsafe_allow_html=True)
-st.markdown(f"🧠 <b>Computer Open Cards:</b> {count_revealed(st.session_state.comp_grid)} / 12", unsafe_allow_html=True)
+st.markdown(f"📂 <b>{st.session_state.player_name} Points:</b> {count_revealed(st.session_state.user_grid)} / 12", unsafe_allow_html=True)
+st.markdown(f"🧠 <b>Computer Points:</b> {count_revealed(st.session_state.comp_grid)} / 12", unsafe_allow_html=True)
 
-draw_col, discard_col = st.columns(2)
+    button_col1, button_col2, button_col3 = st.columns([1,2,1])
 if st.session_state.turn == "user" and st.session_state.selected_card is None:
-    with draw_col:
+    with button_col2:
         if st.button("🃏 Draw from pile"):
             st.session_state.selected_card = st.session_state.draw_pile.pop()
-    with discard_col:
         top_discard = st.session_state.discard_pile[-1]
-        st.write(f"Top Discard: {top_discard}")
+        st.markdown(f'<div style="text-align:center; margin-top:10px">Top Discard: <b>{top_discard}</b></div>', unsafe_allow_html=True)
         if st.button("📥 Take Discard"):
             st.session_state.selected_card = st.session_state.discard_pile.pop()
 
@@ -205,7 +204,7 @@ if st.session_state.selected_card is not None and st.session_state.turn == "user
 def render_grid(grid, name, editable=False):
     st.markdown(f"#### {name}'s Grid")
     for r in range(3):
-        row = st.columns(len(grid))
+        row = st.columns(len(grid), gap='small')  # Ensure tight alignment
         for c in range(len(grid)):
             card = grid[c][r]
             key = f"{name}_{r}_{c}"
@@ -224,7 +223,8 @@ def render_grid(grid, name, editable=False):
                         st.session_state.turn = "comp"
                         st.rerun()
                 else:
-                    row[c].markdown(f"<div style='background-color:{color};' class='card-style'>{card['value']}</div>", unsafe_allow_html=True)
+                    row[c].markdown(f"<div style='display:flex; justify-content:center; align-items:center; height:100%;'>
+<div style='background-color:{color};' class='card-style'>{card['value']}</div>", unsafe_allow_html=True)
             elif editable and st.session_state.selected_card is None:
                 if row[c].button("❓", key=key):
                     card['revealed'] = True
@@ -243,7 +243,7 @@ def render_grid(grid, name, editable=False):
             else:
                 row[c].markdown("❓")
 
-left, right = st.columns(2)
+    button_col1, button_col2, button_col3 = st.columns([1,2,1])
 with left:
     render_grid(st.session_state.user_grid, st.session_state.player_name, editable=(st.session_state.turn == "user"))
 
