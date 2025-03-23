@@ -156,7 +156,7 @@ st.write(f"🧠 Computer Score: {calculate_score(st.session_state.comp_grid)} / 
 # --- Middle Buttons ---
 c1, c2, c3 = st.columns([1,2,1])
 with c2:
-if 'turn' not in st.session_state: st.session_state.turn = 'user'
+    if 'turn' not in st.session_state: st.session_state.turn = 'user'
 if 'game_over' not in st.session_state: st.session_state.game_over = False
     if st.session_state.turn == "user" and st.session_state.selected_card is None:
         if st.button("🃏 Draw from pile"):
