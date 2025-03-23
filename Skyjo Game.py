@@ -49,7 +49,11 @@ def get_card_color(value):
 
 def init_grid(deck):
     return [[>
-    {'🟢 ' + st.session_state.player_name + "'s Turn" if st.session_state.user_turn else '🤖 Computer Turn'}</h4>", unsafe_allow_html=True)
+    if st.session_state.user_turn:
+    turn_text = f"🟢 {st.session_state.player_name}'s Turn"
+else:
+    turn_text = "🤖 Computer Turn"
+st.markdown(f"<h4 style='text-align:center;'>{turn_text}</h4>", unsafe_allow_html=True)
 
 # Display Score
 st.info(f"Total Scores → {st.session_state.player_name}: {st.session_state.user_total} | Computer: {st.session_state.comp_total}")
@@ -124,3 +128,4 @@ if not st.session_state.user_turn and not st.session_state.game_over:
             st.session_state.comp_grid = remove_matching_columns(st.session_state.comp_grid)
         st.session_state.user_turn = True
         st.experimental_rerun()
+
