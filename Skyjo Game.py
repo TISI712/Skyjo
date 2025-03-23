@@ -275,5 +275,3 @@ if st.session_state.turn == "comp" and not st.session_state.game_over:
     st.session_state.comp_grid = remove_matching_columns(st.session_state.comp_grid)
     st.session_state.turn = "user"
     st.rerun()
-
-
