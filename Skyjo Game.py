@@ -1,6 +1,8 @@
+
 import streamlit as st
 from random import shuffle, choice
 import pandas as pd
+import time
 
 # --- Page Config and Custom Style ---
 st.set_page_config(layout="wide", page_title="Skyjo")
@@ -54,15 +56,6 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ✅ To deploy:
-# 1. Create a file called requirements.txt with:
-#    streamlit
-#    pandas
-# 2. Upload this Python file and the requirements.txt to a GitHub repository.
-# 3. Deploy your app on https://streamlit.io/cloud
-
-# ✅ Game logic continues...
-
 # --- Card Setup ---
 def get_card_deck():
     return [-2]*5 + [-1]*10 + [0]*15 + [1]*10 + [2]*10 + [3]*10 + [4]*10 + [5]*10 + [6]*10 + [7]*10 + [8]*10 + [9]*10 + [10]*5
@@ -84,6 +77,9 @@ def all_revealed(grid):
 def calculate_score(grid):
     return sum(card['value'] for col in grid for card in col if card['revealed'])
 
+def count_revealed(grid):
+    return sum(1 for col in grid for card in col if card['revealed'])
+
 def remove_matching_columns(grid):
     new_grid = []
     for col in grid:
@@ -100,8 +96,6 @@ def reveal_random_card(grid):
     if hidden:
         col, row = choice(hidden)
         grid[col][row]['revealed'] = True
-        return col, row
-    return None, None
 
 def setup_new_round():
     full_deck = get_card_deck()
@@ -138,7 +132,7 @@ def end_round():
     if len(st.session_state.history) >= st.session_state.max_rounds:
         st.session_state.game_over = True
 
-# --- Initial Game Setup ---
+# --- Game Start ---
 if "setup_complete" not in st.session_state:
     name = st.text_input("Enter your name:", value="Player")
     max_rounds = st.number_input("How many rounds to play?", 1, 20, 5)
@@ -183,56 +177,11 @@ if all_revealed(st.session_state.comp_grid):
         setup_new_round()
         st.rerun()
 
-# --- Gameplay UI & Turn Actions ---
-def render_grid(grid, name, editable=False):
-    st.markdown(f"#### {name}'s Grid")
-    for r in range(3):
-        row = st.columns(len(grid))
-        for c in range(len(grid)):
-            card = grid[c][r]
-            key = f"{name}_{r}_{c}"
-            if card['revealed']:
-                color = get_card_color(card['value'])
-
-
-                row[c].markdown(f"""
-                    <div style='background-color:{color}; padding:10px; text-align:center; border-radius:10px;'>
-                        <strong>{card['value']}</strong>
-                    </div>
-                """, unsafe_allow_html=True)
-            elif editable and st.session_state.selected_card is None:
-                if row[c].button("❓", key=key):
-                    card['revealed'] = True
-                    st.session_state.user_grid = remove_matching_columns(st.session_state.user_grid)
-                    st.session_state.turn = "comp"
-                    st.rerun()
-            elif editable and st.session_state.selected_card is not None:
-                btn_label = "Swap" if card['revealed'] else "?"
-                if row[c].button(btn_label, key=key):
-                    st.session_state.discard_pile.append(card['value'])
-                    card['value'] = st.session_state.selected_card
-                    card['revealed'] = True
-                    st.session_state.selected_card = None
-                    if name == st.session_state.player_name:
-                        st.session_state.user_grid = remove_matching_columns(st.session_state.user_grid)
-                    else:
-                        st.session_state.comp_grid = remove_matching_columns(st.session_state.comp_grid)
-                    st.session_state.turn = "comp" if name == st.session_state.player_name else "user"
-                    st.rerun()
-            else:
-                row[c].markdown("❓")
-
+# --- UI ---
 st.markdown(f"### Turn: {'🟢 ' + st.session_state.player_name if st.session_state.turn == 'user' else '🤖 Computer'}")
+st.markdown(f"📂 <b>{st.session_state.player_name} Open Cards:</b> {count_revealed(st.session_state.user_grid)} / 12", unsafe_allow_html=True)
+st.markdown(f"🧠 <b>Computer Open Cards:</b> {count_revealed(st.session_state.comp_grid)} / 12", unsafe_allow_html=True)
 
-# --- Open Card Counters ---
-user_open = sum(card['revealed'] for col in st.session_state.user_grid for card in col)
-comp_open = sum(card['revealed'] for col in st.session_state.comp_grid for card in col)
-
-st.markdown(f"🧮 **{st.session_state.player_name} Open Cards:** {user_open} / 12")
-st.markdown(f"🧠 **Computer Open Cards:** {comp_open} / 12")
-
-
-# --- Draw & Discard UI ---
 draw_col, discard_col = st.columns(2)
 if st.session_state.turn == "user" and st.session_state.selected_card is None:
     with draw_col:
@@ -253,15 +202,54 @@ if st.session_state.selected_card is not None and st.session_state.turn == "user
     if st.session_state.get("await_flip"):
         st.info("Now click a ❓ to flip one card.")
 
+def render_grid(grid, name, editable=False):
+    st.markdown(f"#### {name}'s Grid")
+    for r in range(3):
+        row = st.columns(len(grid))
+        for c in range(len(grid)):
+            card = grid[c][r]
+            key = f"{name}_{r}_{c}"
+            if card['revealed']:
+                color = get_card_color(card['value'])
+                if editable and st.session_state.selected_card is not None:
+                    if row[c].button(f"Swap ({card['value']})", key=key):
+                        st.session_state.discard_pile.append(card['value'])
+                        card['value'] = st.session_state.selected_card
+                        card['revealed'] = True
+                        st.session_state.selected_card = None
+                        if name == st.session_state.player_name:
+                            st.session_state.user_grid = remove_matching_columns(st.session_state.user_grid)
+                        else:
+                            st.session_state.comp_grid = remove_matching_columns(st.session_state.comp_grid)
+                        st.session_state.turn = "comp"
+                        st.rerun()
+                else:
+                    row[c].markdown(f"<div style='background-color:{color};' class='card-style'>{card['value']}</div>", unsafe_allow_html=True)
+            elif editable and st.session_state.selected_card is None:
+                if row[c].button("❓", key=key):
+                    card['revealed'] = True
+                    st.session_state.user_grid = remove_matching_columns(st.session_state.user_grid)
+                    st.session_state.turn = "comp"
+                    st.rerun()
+            elif editable and st.session_state.selected_card is not None:
+                if row[c].button("Swap", key=key):
+                    st.session_state.discard_pile.append(card['value'])
+                    card['value'] = st.session_state.selected_card
+                    card['revealed'] = True
+                    st.session_state.selected_card = None
+                    st.session_state.user_grid = remove_matching_columns(st.session_state.user_grid)
+                    st.session_state.turn = "comp"
+                    st.rerun()
+            else:
+                row[c].markdown("❓")
+
 left, right = st.columns(2)
 with left:
     render_grid(st.session_state.user_grid, st.session_state.player_name, editable=(st.session_state.turn == "user"))
 with right:
     render_grid(st.session_state.comp_grid, "Computer")
 
-# --- Computer Turn ---
 if st.session_state.turn == "comp" and not st.session_state.game_over:
-    import time
     time.sleep(1)
     action = choice(["draw", "discard"])
     if action == "discard" and st.session_state.discard_pile:
@@ -285,4 +273,3 @@ if st.session_state.turn == "comp" and not st.session_state.game_over:
     st.session_state.comp_grid = remove_matching_columns(st.session_state.comp_grid)
     st.session_state.turn = "user"
     st.rerun()
-
